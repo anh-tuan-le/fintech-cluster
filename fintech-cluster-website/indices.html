@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Indices · Research Cluster on FinTech & Digital Assets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highstock.js"></script>
+<script>
+if (typeof Highcharts === 'undefined') {
+  document.write('<script src="https://code.highcharts.com/stock/highstock.js"><\/script>');
+}
+</script>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">Live &amp; historical · Interactive</div>
+    <h1 class="hero-title">Digital Asset &amp; FinTech Indices</h1>
+    <p class="hero-desc">
+      Interactive dashboards tracking crypto-asset prices, market volatility, DeFi activity,
+      and the regulatory landscape. The BTC &amp; ETH panels stream real-time data from the
+      free public CoinGecko API; the research indices below load from data files in the repository.
+    </p>
+    <div class="hero-pills">
+      <span class="pill"><span class="live-dot"></span>LIVE BTC / ETH</span>
+      <span class="pill">DeFi TVL</span>
+      <span class="pill">Crypto Volatility</span>
+      <span class="pill">FinTech Funding</span>
+      <span class="pill">Regulation Index</span>
+    </div>
+  </div>
+</div>
+
+<nav class="filter-nav">
+  <button class="filter-tab active" data-section="all">All</button>
+  <button class="filter-tab" data-section="live">Live Crypto</button>
+  <button class="filter-tab" data-section="research">Research Indices</button>
+</nav>
+
+<div class="main">
+
+  <div class="section" data-category="live">
+    <div class="section-header">
+      <div class="section-title">Live Crypto Prices</div>
+      <div class="section-meta"><span class="live-dot"></span>SOURCE: COINGECKO · AUTO-REFRESH 60s</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-head">
+          <div><div class="chart-title">Bitcoin (BTC) / USD</div>
+          <div class="chart-subtitle">90-day daily close · live</div></div>
+          <div class="chart-stats" id="btc-stats"><span class="mono muted" style="font-size:11px">loading…</span></div>
+        </div>
+        <div class="chart-body"><div id="chart-btc" style="height:300px;"></div></div>
+        <div class="chart-foot">
+          <span class="chart-citation">Data: CoinGecko · /coins/bitcoin/market_chart</span>
+          <a class="chart-source-link" href="https://www.coingecko.com/en/coins/bitcoin" target="_blank" rel="noopener">↗ CoinGecko</a>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <div><div class="chart-title">Ethereum (ETH) / USD</div>
+          <div class="chart-subtitle">90-day daily close · live</div></div>
+          <div class="chart-stats" id="eth-stats"><span class="mono muted" style="font-size:11px">loading…</span></div>
+        </div>
+        <div class="chart-body"><div id="chart-eth" style="height:300px;"></div></div>
+        <div class="chart-foot">
+          <span class="chart-citation">Data: CoinGecko · /coins/ethereum/market_chart</span>
+          <a class="chart-source-link" href="https://www.coingecko.com/en/coins/ethereum" target="_blank" rel="noopener">↗ CoinGecko</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-category="research">
+    <div class="section-header">
+      <div class="section-title">Research Indices</div>
+      <div class="section-meta">LOADED FROM data/*.json</div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <div><div class="chart-title">DeFi Total Value Locked (Index)</div>
+        <div class="chart-subtitle">Indexed activity in decentralised finance protocols</div></div>
+        <div class="chart-stats" id="defi-stats"></div>
+      </div>
+      <div class="chart-body"><div id="chart-defi" style="height:340px;"></div></div>
+      <div class="chart-foot"><span class="chart-citation">data/defi_tvl.json</span></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Crypto Volatility Index</div>
+        <div class="chart-subtitle">Monthly</div></div><div class="chart-stats" id="vol-stats"></div></div>
+        <div class="chart-body"><div id="chart-vol" style="height:280px;"></div></div>
+        <div class="chart-foot"><span class="chart-citation">data/crypto_vol.json</span></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">FinTech Funding Index</div>
+        <div class="chart-subtitle">Monthly</div></div><div class="chart-stats" id="fund-stats"></div></div>
+        <div class="chart-body"><div id="chart-fund" style="height:280px;"></div></div>
+        <div class="chart-foot"><span class="chart-citation">data/fintech_funding.json</span></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head"><div><div class="chart-title">Digital Asset Regulation Index</div>
+      <div class="chart-subtitle">Tracks intensity of regulatory activity</div></div><div class="chart-stats" id="reg-stats"></div></div>
+      <div class="chart-body"><div id="chart-reg" style="height:300px;"></div></div>
+      <div class="chart-foot"><span class="chart-citation">data/regulation_index.json</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+if (typeof Highcharts === 'undefined') {
+  document.querySelectorAll('[id^="chart-"]').forEach(el=>{
+    el.innerHTML='<div style="padding:2rem;text-align:center;color:#8a94a3;'+
+      'font-family:JetBrains Mono,monospace;font-size:12px">Chart library could not load.<br/>'+
+      'Check your internet connection and refresh.</div>';});
+  throw new Error('Highcharts unavailable');
+}
+
+Highcharts.setOptions({
+  chart:{backgroundColor:'transparent',style:{fontFamily:"'Source Sans 3',sans-serif"},spacing:[10,8,8,8]},
+  credits:{enabled:false},
+  xAxis:{lineColor:'#e3e8ef',tickColor:'#e3e8ef',
+    labels:{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#8a94a3'}}},
+  yAxis:{gridLineColor:'#eef1f6',
+    labels:{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#8a94a3'}}},
+  tooltip:{backgroundColor:'#1f2733',borderWidth:0,borderRadius:6,
+    style:{color:'#eef2f7',fontFamily:"'JetBrains Mono',monospace",fontSize:'11px'},
+    xDateFormat:'%e %b %Y'},
+  navigator:{enabled:true,height:40,maskFill:'rgba(26,79,138,0.08)',outlineColor:'#cdd5e0',
+    handles:{backgroundColor:'#e3e8ef',borderColor:'#8a94a3'},
+    xAxis:{labels:{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'9px',color:'#8a94a3'}}},
+    series:{lineWidth:1,color:'#1a4f8a'}},
+  scrollbar:{enabled:false},
+  rangeSelector:{buttonTheme:{fill:'#f1f4f8',stroke:'#cdd5e0',
+      style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#48566a'},
+      states:{hover:{fill:'#e9f0f9',style:{color:'#1f2733'}},select:{fill:'#1a4f8a',style:{color:'#fff'}}}},
+    inputStyle:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#48566a'},
+    labelStyle:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#8a94a3'}},
+  plotOptions:{series:{states:{hover:{lineWidth:2}},animation:{duration:500}}}
+});
+
+function getStats(d){const v=d.map(x=>x[1]).filter(x=>x!=null);const last=v[v.length-1];
+  const prev=v[Math.max(0,v.length-31)];const avg=v.reduce((a,b)=>a+b,0)/v.length;
+  const max=Math.max(...v);const chg=(last-prev)/prev*100;return{last,avg,max,chg};}
+
+function renderStats(el,s,opt={}){
+  const money=opt.money;const fmt=v=>money?'$'+v.toLocaleString(undefined,{maximumFractionDigits:0}):v.toFixed(1);
+  const cls=s.chg>=0?'up':'dn';const arr=s.chg>=0?'▲':'▼';const lbl=opt.chgLabel||'30d Δ';
+  el.innerHTML=`
+    <div class="stat-box"><div class="stat-label">Latest</div><div class="stat-val">${fmt(s.last)}</div></div>
+    <div class="stat-box"><div class="stat-label">${lbl}</div><div class="stat-val ${cls}">${arr}${Math.abs(s.chg).toFixed(1)}%</div></div>
+    <div class="stat-box"><div class="stat-label">Peak</div><div class="stat-val">${fmt(s.max)}</div></div>`;
+}
+
+function plotArea(id,data,name,color,opts={}){
+  return Highcharts.stockChart(id,Highcharts.merge({
+    rangeSelector:{selected:opts.selected??1,buttons:opts.buttons||[
+      {type:'month',count:1,text:'1m'},{type:'month',count:3,text:'3m'},
+      {type:'year',count:1,text:'1y'},{type:'all',text:'All'}]},
+    series:[{name,data,color,lineWidth:1.8,type:'area',
+      fillColor:{linearGradient:{x1:0,y1:0,x2:0,y2:1},
+        stops:[[0,Highcharts.color(color).setOpacity(.22).get('rgba')],
+               [1,Highcharts.color(color).setOpacity(.01).get('rgba')]]},
+      threshold:null,marker:{enabled:false,states:{hover:{radius:4}}},
+      tooltip:{valuePrefix:opts.money?'$':'',valueDecimals:opts.money?0:2}}],
+    yAxis:{title:{text:null}}
+  },opts.extra||{}));
+}
+
+async function loadCrypto(coin,chartId,statsId,color){
+  const url=`https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=90&interval=daily`;
+  try{
+    const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    const data=j.prices.map(p=>[p[0],Math.round(p[1])]);
+    renderStats(document.getElementById(statsId),getStats(data),{money:true});
+    plotArea(chartId,data,coin.toUpperCase(),color,{money:true,selected:3,
+      buttons:[{type:'week',count:1,text:'1w'},{type:'month',count:1,text:'1m'},{type:'all',text:'90d'}]});
+  }catch(e){
+    document.getElementById(statsId).innerHTML='<span class="mono dn" style="font-size:11px">live data unavailable</span>';
+    document.getElementById(chartId).innerHTML=
+      '<div style="padding:2rem;text-align:center;color:#8a94a3;font-family:JetBrains Mono,monospace;font-size:12px">'+
+      'Could not reach CoinGecko (rate limit or offline).<br/>Works when served over http(s).</div>';
+  }
+}
+loadCrypto('bitcoin','chart-btc','btc-stats','#c08a2d');
+loadCrypto('ethereum','chart-eth','eth-stats','#1a4f8a');
+setInterval(()=>{loadCrypto('bitcoin','chart-btc','btc-stats','#c08a2d');
+  loadCrypto('ethereum','chart-eth','eth-stats','#1a4f8a');},60000);
+
+async function loadJSON(p){const r=await fetch(p);return r.json();}
+(async()=>{
+  try{
+    const [defi,vol,fund,reg]=await Promise.all([
+      loadJSON('data/defi_tvl.json'),loadJSON('data/crypto_vol.json'),
+      loadJSON('data/fintech_funding.json'),loadJSON('data/regulation_index.json')]);
+    renderStats(document.getElementById('defi-stats'),getStats(defi));
+    plotArea('chart-defi',defi,'DeFi TVL','#1a7a4f',{selected:3});
+    renderStats(document.getElementById('vol-stats'),getStats(vol));
+    plotArea('chart-vol',vol,'Volatility','#c0392b',{selected:3});
+    renderStats(document.getElementById('fund-stats'),getStats(fund));
+    plotArea('chart-fund',fund,'Funding','#1a4f8a',{selected:3});
+    renderStats(document.getElementById('reg-stats'),getStats(reg));
+    plotArea('chart-reg',reg,'Regulation','#7a3d9c',{selected:3});
+  }catch(e){console.warn('research index load failed',e);}
+})();
+
+document.querySelectorAll('.filter-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.filter-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');const s=t.dataset.section;
+  document.querySelectorAll('.section[data-category]').forEach(sec=>{
+    sec.classList.toggle('hidden',!(s==='all'||sec.dataset.category===s));});
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),60);
+}));
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>

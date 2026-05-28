@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Publications · Research Cluster on FinTech & Digital Assets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">Publications</div>
+    <h1 class="hero-title">Selected research output</h1>
+    <p class="hero-desc">
+      Peer-reviewed articles, working papers, conference proceedings, and book chapters
+      from members of the cluster. Filter by type below.
+    </p>
+  </div>
+</div>
+
+<div class="main">
+  <div class="pub-filters">
+    <button class="pub-filter active" data-f="all">All</button>
+    <button class="pub-filter" data-f="journal">Journal</button>
+    <button class="pub-filter" data-f="working">Working papers</button>
+    <button class="pub-filter" data-f="conf">Conference</button>
+    <button class="pub-filter" data-f="chapter">Book chapters</button>
+  </div>
+  <div id="pub-list"></div>
+</div>
+
+<script>
+const PUBS = [
+  { year:2026, type:"working",
+    title:"Stablecoin Depegging and Contagion in DeFi Lending Markets",
+    authors:["C. Nguyen","R. Kumar","T. O'Brien"], me:"C. Nguyen",
+    venue:"Cluster Working Paper No. 2026-03",
+    links:[{t:"PDF",u:"#"},{t:"SSRN",u:"#"},{t:"Code",u:"#"}] },
+  { year:2026, type:"journal",
+    title:"Tail Risk and Diversification Benefits of Crypto-Assets in Multi-Asset Portfolios",
+    authors:["J. Smith","C. Nguyen"], me:"C. Nguyen",
+    venue:"Journal of Financial Markets, forthcoming",
+    links:[{t:"DOI",u:"#"},{t:"PDF",u:"#"}] },
+  { year:2025, type:"journal",
+    title:"Price Discovery on Decentralised Exchanges: Evidence from Automated Market Makers",
+    authors:["C. Nguyen","R. Kumar"], me:"C. Nguyen",
+    venue:"Journal of Empirical Finance 72(4), 1123–1158",
+    links:[{t:"DOI",u:"#"},{t:"PDF",u:"#"},{t:"Data",u:"#"}] },
+  { year:2025, type:"conf",
+    title:"Measuring Maximal Extractable Value: A Machine-Learning Approach",
+    authors:["R. Kumar","S. Patel","C. Nguyen"], me:"C. Nguyen",
+    venue:"Proc. ACM Conf. on Advances in Financial Technologies (AFT 2025)",
+    links:[{t:"PDF",u:"#"},{t:"Slides",u:"#"}] },
+  { year:2025, type:"working",
+    title:"Central Bank Digital Currencies and Bank Disintermediation: A General Equilibrium Analysis",
+    authors:["J. Smith","S. Patel"], me:"",
+    venue:"Cluster Working Paper No. 2025-08",
+    links:[{t:"PDF",u:"#"},{t:"SSRN",u:"#"}] },
+  { year:2024, type:"journal",
+    title:"Crypto Policy Uncertainty and Asset Returns",
+    authors:["C. Nguyen","M. Chen"], me:"C. Nguyen",
+    venue:"International Review of Financial Analysis 95, 103210",
+    links:[{t:"DOI",u:"#"},{t:"PDF",u:"#"}] },
+  { year:2024, type:"chapter",
+    title:"The Regulation of Crypto-Assets in the Asia-Pacific",
+    authors:["M. Chen"], me:"",
+    venue:"In: Handbook of Digital Finance Regulation, Ch. 12, OUP",
+    links:[{t:"Publisher",u:"#"}] },
+  { year:2024, type:"conf",
+    title:"Liquidity Fragmentation Across Centralised and Decentralised Crypto Markets",
+    authors:["C. Nguyen","T. O'Brien"], me:"C. Nguyen",
+    venue:"Proc. New Zealand Finance Colloquium 2024",
+    links:[{t:"PDF",u:"#"},{t:"Slides",u:"#"}] },
+];
+
+const BADGE={journal:["b-journal","Journal"],working:["b-working","Working paper"],
+  conf:["b-conf","Conference"],chapter:["b-chapter","Book chapter"]};
+function fmtAuthors(a,me){return a.map(x=>x===me?`<span class="me">${x}</span>`:x).join(", ");}
+function render(filter){
+  const list=document.getElementById('pub-list');
+  const items=PUBS.filter(p=>filter==='all'||p.type===filter).sort((a,b)=>b.year-a.year);
+  let html='',lastYear=null;
+  items.forEach(p=>{
+    if(p.year!==lastYear){html+=`<div class="pub-year">${p.year}</div>`;lastYear=p.year;}
+    const [bc,bl]=BADGE[p.type];
+    html+=`<div class="pub">
+      <div class="pub-thumb">${p.type==='journal'?'JOURNAL':p.type==='working'?'WP':p.type==='conf'?'CONF':'CH'}<br/>${p.year}</div>
+      <div>
+        <span class="pub-badge ${bc}">${bl}</span>
+        <div class="pub-title"><a href="${p.links[0]?.u||'#'}">${p.title}</a></div>
+        <div class="pub-authors">${fmtAuthors(p.authors,p.me)}</div>
+        <div class="pub-venue">${p.venue}</div>
+        <div class="pub-links">${p.links.map(l=>`<a class="pub-link" href="${l.u}" target="_blank" rel="noopener">${l.t}</a>`).join("")}</div>
+      </div></div>`;
+  });
+  list.innerHTML=html||'<p class="muted">No publications in this category yet.</p>';
+}
+render('all');
+document.querySelectorAll('.pub-filter').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.pub-filter').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');render(b.dataset.f);
+}));
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>
