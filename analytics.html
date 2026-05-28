@@ -98,11 +98,12 @@ if (typeof Highcharts === 'undefined') {
   var code = (typeof SITE !== "undefined" && SITE.goatcounterCode) ? SITE.goatcounterCode : "";
   if(code){
     area.innerHTML =
-      '<p class="muted" style="margin-bottom:.8rem">Live dashboard below shows total visits, '+
-      'a world map of visitor countries, top pages, referrers, browsers and more. '+
-      '<a href="https://'+code+'.goatcounter.com" target="_blank" rel="noopener">Open full dashboard ↗</a></p>'+
-      '<iframe class="gc-frame" src="https://'+code+'.goatcounter.com/share/" '+
-      'title="GoatCounter live analytics" loading="lazy"></iframe>';
+      '<div style="text-align:center;padding:3rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:8px">'+
+      '<p style="margin-bottom:.5rem;color:var(--ink2);font-size:15px">Live visitor analytics powered by GoatCounter.</p>'+
+      '<p style="margin-bottom:1.5rem;color:var(--ink2);font-size:13px">Includes total visits, world map of countries, top pages, referrers and browsers.</p>'+
+      '<a href="https://'+code+'.goatcounter.com" target="_blank" rel="noopener" '+
+      'style="display:inline-block;padding:12px 28px;background:#1a4f8a;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;font-size:15px">'+
+      'Open Live Analytics Dashboard ↗</a></div>';
   } else {
     area.innerHTML =
       '<div class="gc-setup">'+
