@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Analytics · Research Cluster on FinTech & Digital Assets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highstock.js"></script>
+<script>
+if (typeof Highcharts === 'undefined') {
+  document.write('<script src="https://code.highcharts.com/stock/highstock.js"><\/script>');
+}
+</script>
+<style>
+.gc-frame{width:100%;height:760px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.gc-setup{background:var(--bg-alt);border:1px dashed var(--border2);border-radius:8px;padding:1.6rem}
+.gc-setup ol{margin:.6rem 0 0 1.1rem;color:var(--ink2)}
+.gc-setup li{margin:.4rem 0}
+.gc-setup code{font-family:var(--mono);font-size:12px;background:var(--surface2);padding:1px 6px;border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">Analytics</div>
+    <h1 class="hero-title">Visitors &amp; traffic</h1>
+    <p class="hero-desc">
+      Two complementary views: <strong>live-site visitors and countries</strong> (via
+      GoatCounter, privacy-friendly, no cookies) and <strong>GitHub repository traffic</strong>
+      (views, clones, and referrers) collected daily so history is kept beyond GitHub's 14-day window.
+    </p>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ───── LIVE SITE: GoatCounter ───── -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="live-dot"></span>Live site visitors &amp; countries</div>
+      <div class="section-meta">SOURCE: GOATCOUNTER</div>
+    </div>
+    <div id="gc-area"></div>
+  </section>
+
+  <!-- ───── GITHUB REPO TRAFFIC ───── -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title">GitHub repository traffic</div>
+      <div class="section-meta" id="gh-updated">LOADING…</div>
+    </div>
+
+    <div class="stat-row" id="gh-stats">
+      <div class="stat-big"><div class="num">—</div><div class="lbl">Views (14d)</div></div>
+      <div class="stat-big"><div class="num">—</div><div class="lbl">Unique (14d)</div></div>
+      <div class="stat-big"><div class="num">—</div><div class="lbl">Clones (14d)</div></div>
+      <div class="stat-big"><div class="num">—</div><div class="lbl">Days recorded</div></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <div><div class="chart-title">Daily views &amp; unique visitors</div>
+        <div class="chart-subtitle">Accumulated history · GitHub traffic API</div></div>
+      </div>
+      <div class="chart-body"><div id="chart-views" style="height:320px;"></div></div>
+      <div class="chart-foot"><span class="chart-citation">data/traffic/views.json</span></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Daily clones</div>
+        <div class="chart-subtitle">git clones of the repo</div></div></div>
+        <div class="chart-body"><div id="chart-clones" style="height:260px;"></div></div>
+        <div class="chart-foot"><span class="chart-citation">data/traffic/clones.json</span></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">Top referrers</div>
+        <div class="chart-subtitle">where repo visitors came from (14d)</div></div></div>
+        <div class="chart-body" style="padding:1rem 1.5rem"><div id="referrers"></div></div>
+        <div class="chart-foot"><span class="chart-citation">data/traffic/referrers.json</span></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="assets/site.js"></script>
+<script>
+/* ════════════ GoatCounter embed (live visitors + countries) ════════════
+   Reads SITE.goatcounterCode (defined in assets/site.js) so configuration
+   lives in one place. If empty, show setup steps; otherwise embed dashboard. */
+(function(){
+  var area = document.getElementById('gc-area');
+  var code = (typeof SITE !== "undefined" && SITE.goatcounterCode) ? SITE.goatcounterCode : "";
+  if(code){
+    area.innerHTML =
+      '<p class="muted" style="margin-bottom:.8rem">Live dashboard below shows total visits, '+
+      'a world map of visitor countries, top pages, referrers, browsers and more. '+
+      '<a href="https://'+code+'.goatcounter.com" target="_blank" rel="noopener">Open full dashboard ↗</a></p>'+
+      '<iframe class="gc-frame" src="https://'+code+'.goatcounter.com" '+
+      'title="GoatCounter live analytics" loading="lazy"></iframe>';
+  } else {
+    area.innerHTML =
+      '<div class="gc-setup">'+
+      '<strong>Visitor &amp; country tracking is not switched on yet.</strong>'+
+      '<ol>'+
+      '<li>Create a free account at <a href="https://www.goatcounter.com/" target="_blank" rel="noopener">goatcounter.com</a> and choose a <em>code</em> (a subdomain, e.g. <code>fintech-cluster</code>).</li>'+
+      '<li>Open <code>assets/site.js</code> and set <code>goatcounterCode: "fintech-cluster"</code>.</li>'+
+      '<li>In GoatCounter → <em>Settings → Allow public access to the dashboard</em> so it can be embedded here.</li>'+
+      '<li>Commit &amp; push. Visits to your live site will then appear here, including a world map of countries.</li>'+
+      '</ol>'+
+      '<p class="muted" style="margin-top:.8rem;font-size:13px">GoatCounter is privacy-friendly: no cookies, no IP storage, no consent banner required.</p>'+
+      '</div>';
+  }
+})();
+
+/* ════════════ GitHub traffic charts ════════════ */
+function ghTheme(){
+  if(typeof Highcharts==="undefined")return;
+  Highcharts.setOptions({
+    chart:{backgroundColor:'transparent',style:{fontFamily:"'Source Sans 3',sans-serif"}},
+    credits:{enabled:false},
+    xAxis:{type:'datetime',lineColor:'#e3e8ef',tickColor:'#e3e8ef',
+      labels:{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#8a94a3'}}},
+    yAxis:{gridLineColor:'#eef1f6',allowDecimals:false,title:{text:null},
+      labels:{style:{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#8a94a3'}}},
+    tooltip:{backgroundColor:'#1f2733',borderWidth:0,borderRadius:6,shared:true,
+      style:{color:'#eef2f7',fontFamily:"'JetBrains Mono',monospace",fontSize:'11px'},
+      xDateFormat:'%e %b %Y'},
+    legend:{itemStyle:{fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',color:'#48566a'}},
+    plotOptions:{series:{marker:{enabled:false},animation:{duration:400}}}
+  });
+}
+function toSeries(rows,field){return (rows||[]).map(r=>[new Date(r.timestamp).getTime(), r[field]||0]);}
+async function jget(p){const r=await fetch(p);if(!r.ok)throw new Error(p);return r.json();}
+
+(async function(){
+  ghTheme();
+  try{
+    const s=await jget('data/traffic/summary.json');
+    const nums=[s.views_total_14d,s.views_unique_14d,s.clones_total_14d,s.days_recorded];
+    document.querySelectorAll('#gh-stats .stat-big .num').forEach((el,i)=>el.textContent=nums[i]??'—');
+    document.getElementById('gh-updated').textContent =
+      s.updated && s.updated.indexOf('not run')<0 ? ('UPDATED '+s.updated.slice(0,10)) : 'NOT RUN YET';
+  }catch(e){document.getElementById('gh-updated').textContent='NO DATA YET';}
+
+  try{
+    const v=await jget('data/traffic/views.json');
+    if(typeof Highcharts!=="undefined" && v.length){
+      Highcharts.chart('chart-views',{
+        title:{text:null},
+        series:[
+          {name:'Views',data:toSeries(v,'count'),type:'area',color:'#1a4f8a',
+           fillColor:{linearGradient:{x1:0,y1:0,x2:0,y2:1},
+             stops:[[0,'rgba(26,79,138,.22)'],[1,'rgba(26,79,138,.01)']]}},
+          {name:'Unique',data:toSeries(v,'uniques'),type:'line',color:'#1a7a4f',dashStyle:'ShortDash'}
+        ]});
+    } else emptyChart('chart-views');
+  }catch(e){emptyChart('chart-views');}
+
+  try{
+    const c=await jget('data/traffic/clones.json');
+    if(typeof Highcharts!=="undefined" && c.length){
+      Highcharts.chart('chart-clones',{
+        title:{text:null},
+        series:[{name:'Clones',data:toSeries(c,'count'),type:'column',color:'#7a3d9c'},
+                {name:'Unique',data:toSeries(c,'uniques'),type:'line',color:'#c08a2d'}]});
+    } else emptyChart('chart-clones');
+  }catch(e){emptyChart('chart-clones');}
+
+  try{
+    const refs=await jget('data/traffic/referrers.json');
+    const box=document.getElementById('referrers');
+    if(refs && refs.length){
+      box.innerHTML='<ul class="clean">'+refs.slice(0,8).map(r=>
+        `<li style="display:flex;justify-content:space-between;gap:1rem">
+           <span>${r.referrer}</span>
+           <span class="mono" style="color:var(--accent)">${r.count} <span class="muted">/ ${r.uniques}u</span></span>
+         </li>`).join('')+'</ul>';
+    } else box.innerHTML='<p class="muted mono" style="font-size:12px">No referrer data yet.</p>';
+  }catch(e){
+    document.getElementById('referrers').innerHTML=
+      '<p class="muted mono" style="font-size:12px">No referrer data yet.</p>';
+  }
+})();
+
+function emptyChart(id){
+  document.getElementById(id).innerHTML=
+    '<div style="padding:2.2rem;text-align:center;color:#8a94a3;font-family:JetBrains Mono,monospace;font-size:12px">'+
+    'No data yet.<br/>The daily GitHub Action will populate this after it first runs.<br/>'+
+    '(You can trigger it manually in the repo\u2019s <b>Actions</b> tab.)</div>';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>News · Research Cluster on FinTech & Digital Assets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/style.css"/>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">FinTech News</div>
+    <h1 class="hero-title">Market pulse &amp; live headlines</h1>
+    <p class="hero-desc">
+      A live snapshot of the digital-asset market plus an automatically updated feed of
+      developments in FinTech, DeFi, and crypto — pulled from established industry sources.
+    </p>
+  </div>
+</div>
+
+<div class="main">
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="live-dot"></span>Live Market Snapshot</div>
+      <div class="section-meta">COINGECKO · AUTO-REFRESH 60s</div>
+    </div>
+    <div class="ticker" id="ticker">
+      <div class="tick"><div class="sym">LOADING…</div><div class="price">—</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title">Latest headlines</div>
+      <div class="section-meta" id="feed-meta">FETCHING LIVE FEEDS…</div>
+    </div>
+    <div id="news-list">
+      <!-- Live items are injected here. The block below is the STATIC FALLBACK
+           shown only if the live feeds cannot be reached. -->
+      <div id="news-fallback">
+        <div class="news-item">
+          <div class="news-source">JFDA</div>
+          <div class="news-body">
+            <h4><a href="journal.html">Inaugural issue of The Journal of FinTech and Digital Assets is out</a></h4>
+            <p class="muted">Volume 1, Number 1 (2026) features research on stablecoins, Bitcoin law, VaR optimisation, fraud detection, and CBDC spillovers.</p>
+            <span class="news-time">JFDA · 2026-05-26</span>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-source">RESEARCH</div>
+          <div class="news-body">
+            <h4><a href="publications.html">Cluster working paper: Stablecoin depegging and contagion in DeFi lending</a></h4>
+            <p class="muted">Our latest paper documents how depegging shocks propagate through interconnected lending protocols.</p>
+            <span class="news-time">Cluster · 2026-05-10</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ─────────── LIVE CRYPTO TICKER (CoinGecko) ─────────── */
+const COINS=[
+  {id:"bitcoin",sym:"BTC"},{id:"ethereum",sym:"ETH"},
+  {id:"solana",sym:"SOL"},{id:"binancecoin",sym:"BNB"},
+  {id:"ripple",sym:"XRP"},{id:"cardano",sym:"ADA"}
+];
+async function loadTicker(){
+  const ids=COINS.map(c=>c.id).join(",");
+  const url=`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+  const box=document.getElementById('ticker');
+  try{
+    const r=await fetch(url);if(!r.ok)throw new Error(r.status);
+    const j=await r.json();
+    box.innerHTML=COINS.map(c=>{
+      const d=j[c.id];if(!d)return"";
+      const chg=d.usd_24hr_change||0;const cls=chg>=0?'up':'dn';const arr=chg>=0?'▲':'▼';
+      const price=d.usd>=1?'$'+d.usd.toLocaleString(undefined,{maximumFractionDigits:0}):'$'+d.usd.toFixed(4);
+      return `<div class="tick"><div class="sym">${c.sym} / USD</div>
+        <div class="price">${price}</div>
+        <div class="chg ${cls}">${arr} ${Math.abs(chg).toFixed(2)}% · 24h</div></div>`;
+    }).join("");
+  }catch(e){
+    box.innerHTML='<div class="tick"><div class="sym">UNAVAILABLE</div><div class="price">—</div>'+
+      '<div class="chg muted" style="font-size:10px">CoinGecko unreachable</div></div>';
+  }
+}
+loadTicker();setInterval(loadTicker,60000);
+
+/* ─────────── LIVE NEWS FEED (RSS via free JSON proxy) ───────────
+   Static sites can't read RSS directly (CORS), so we use the free
+   rss2json public endpoint. Edit the FEEDS list to add/remove sources.
+   Each source must publish a standard RSS/Atom feed. */
+const FEEDS=[
+  {label:"FINTECH NZ", url:"https://fintechnews.co.nz/feed/"},
+  {label:"JFDA",       url:"https://journals.lincoln.ac.nz/index.php/JFDA/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2"},
+  {label:"FINTECH SG", url:"https://fintechnews.sg/feed/"}
+];
+const MAX_PER_FEED=4, MAX_TOTAL=14;
+
+function timeAgo(d){
+  const s=(Date.now()-d.getTime())/1000;
+  if(s<3600)return Math.floor(s/60)+"m ago";
+  if(s<86400)return Math.floor(s/3600)+"h ago";
+  return Math.floor(s/86400)+"d ago";
+}
+function esc(t){const e=document.createElement('div');e.textContent=t||"";return e.innerHTML;}
+
+async function fetchFeed(f){
+  const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(f.url);
+  const r=await fetch(api);
+  if(!r.ok)throw new Error(f.label+" HTTP "+r.status);
+  const j=await r.json();
+  if(j.status!=="ok"||!j.items)throw new Error(f.label+" bad payload");
+  return j.items.slice(0,MAX_PER_FEED).map(it=>({
+    source:f.label,
+    title:it.title,
+    link:it.link,
+    desc:(it.description||"").replace(/<[^>]+>/g,"").slice(0,180),
+    date:new Date(it.pubDate)
+  }));
+}
+
+async function loadNews(){
+  const meta=document.getElementById('feed-meta');
+  try{
+    const results=await Promise.allSettled(FEEDS.map(fetchFeed));
+    let items=[];
+    results.forEach(r=>{if(r.status==="fulfilled")items=items.concat(r.value);});
+    if(!items.length)throw new Error("no items");
+    items.sort((a,b)=>b.date-a.date);
+    items=items.slice(0,MAX_TOTAL);
+    document.getElementById('news-list').innerHTML=items.map(n=>`
+      <div class="news-item">
+        <div class="news-source">${esc(n.source)}</div>
+        <div class="news-body">
+          <h4><a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a></h4>
+          ${n.desc?`<p class="muted">${esc(n.desc)}…</p>`:""}
+          <span class="news-time">${isNaN(n.date)?"":timeAgo(n.date)}</span>
+        </div>
+      </div>`).join("");
+    meta.textContent="LIVE · "+items.length+" HEADLINES · UPDATED "+new Date().toLocaleTimeString();
+  }catch(e){
+    // Keep the static fallback already in the DOM.
+    meta.textContent="SHOWING SAVED ITEMS · LIVE FEED UNAVAILABLE";
+  }
+}
+loadNews();setInterval(loadNews,15*60*1000); // refresh every 15 min
+</script>
+<script src="assets/site.js"></script>
+</body>
+</html>
