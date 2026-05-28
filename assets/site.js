@@ -17,7 +17,7 @@ const SITE = {
   // 2. Put that code here. Leave "" to DISABLE all visitor tracking.
   //    Example: if your dashboard is https://fintech-cluster.goatcounter.com
   //    then goatcounterCode = "fintech-cluster".
-  goatcounterCode: "",   // <-- e.g. "fintech-cluster"
+  goatcounterCode: "fintech-cluster",   // <-- e.g. "fintech-cluster"
   // 3. In GoatCounter: Settings → "Allow public access to the dashboard"
   //    so the Analytics page can embed your live stats.
 
