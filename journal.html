@@ -155,8 +155,8 @@ Computer Science · Management.
 </section>
 
 <section class="section">
-<div class="section-header"><div class="section-title">Calls &amp; announcements</div></div>
-<ul class="clean">
+<div class="section-header"><div class="section-title">Calls &amp; announcements</div><div class="section-meta" id="ann-meta">FETCHING LIVE ANNOUNCEMENTS…</div></div>
+<ul class="clean" id="ann-list">
 <li><span class="mono" style="color:var(--accent)">2026-01-18</span> &nbsp; <a href="https://journals.lincoln.ac.nz/index.php/JFDA/announcement" target="_blank" rel="noopener">Call for Papers</a> — general submissions welcome.</li>
 <li><span class="mono" style="color:var(--accent)">2025-12-31</span> &nbsp; <a href="https://journals.lincoln.ac.nz/index.php/JFDA/announcement" target="_blank" rel="noopener">Special Issue: Islamic FinTech Beyond Adoption</a>.</li>
 <li><span class="mono" style="color:var(--accent)">2025-12-01</span> &nbsp; <a href="https://journals.lincoln.ac.nz/index.php/JFDA/announcement" target="_blank" rel="noopener">Call for Reviewers</a>.</li>
@@ -186,6 +186,7 @@ and <a href="https://www.youtube.com/@jfda2025" target="_blank" rel="noopener">Y
    rss2json public endpoint, same trick as the News page. This pulls
    whichever issue JFDA currently has live, so it never goes stale. */
 const JOURNAL_FEED="https://journals.lincoln.ac.nz/index.php/JFDA/gateway/plugin/WebFeedGatewayPlugin/rss2";
+   const ANNOUNCEMENT_FEED="https://journals.lincoln.ac.nz/index.php/JFDA/gateway/plugin/AnnouncementFeedGatewayPlugin/rss2";
 
 function escI(t){const e=document.createElement('div');e.textContent=t||"";return e.innerHTML;}
 
@@ -216,7 +217,31 @@ meta.textContent="LIVE · "+items.length+" ARTICLES"+(latest?" · PUBLISHED "+la
 meta.textContent="SHOWING SAVED ISSUE · LIVE FEED UNAVAILABLE";
 }
 }
-loadCurrentIssue();setInterval(loadCurrentIssue,15*60*1000);
+async function loadAnnouncements(){
+   const meta=document.getElementById('ann-meta');
+   try{
+      const api="https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(ANNOUNCEMENT_FEED);
+      const r=await fetch(api);
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      const j=await r.json();
+      if(j.status!=="ok"||!j.items)throw new Error("bad payload");
+      
+      const items=j.items.slice(0,6);
+      
+      document.getElementById('ann-list').innerHTML=items.map(it=>{
+         const d=new Date(it.pubDate);
+         const ds=isNaN(d)?"":d.toISOString().slice(0,10);
+         return `
+         <li><span class="mono" style="color:var(--accent)">${ds}</span> &nbsp; <a href="${escI(it.link)}" target="_blank" rel="noopener">${escI(it.title)}</a></li>`;
+      }).join("");
+      
+      meta.textContent="LIVE · "+items.length+" ANNOUNCEMENTS";
+   }catch(e){
+      meta.textContent="SHOWING SAVED ANNOUNCEMENTS · LIVE FEED UNAVAILABLE";
+   }
+}
+   loadAnnouncements();setInterval(loadAnnouncements,15*60*1000);
+   loadCurrentIssue();setInterval(loadCurrentIssue,15*60*1000);
 </script>
 <script src="assets/site.js"></script>
 </body>
