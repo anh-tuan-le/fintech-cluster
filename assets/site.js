@@ -101,6 +101,12 @@ function renderFooter(){
         <a href="mailto:${SITE.email}">${SITE.email}</a><br/>
         <span style="opacity:.7">© ${new Date().getFullYear()} · CC BY 4.0</span>
       </div>
+      <div class="footer-col">
+      <strong>VISITORS</strong>
+      <a href="https://info.flagcounter.com/Rjuf">
+      <img src="https://s05.flagcounter.com/count2/Rjuf/bg_FFFFFF/txt_1A4F8A/border_1A4F8A/columns_2/maxflags_10/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Flag Counter" border="0">
+      </a>
+      </div>
     </div>`;
   document.body.appendChild(f);
 }
